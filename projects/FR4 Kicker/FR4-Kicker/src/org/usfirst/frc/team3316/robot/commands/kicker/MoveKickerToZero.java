@@ -40,7 +40,7 @@ public class MoveKickerToZero extends Command
 
     protected void end() 
     {
-        ManageKicker.changeState(KickerState.Off);
+        ManageKicker.changeState(KickerState.OFF);
     }
 
     protected void interrupted() {end();}

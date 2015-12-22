@@ -44,7 +44,7 @@ public class ShakenCommand extends Command
 
     protected void end() 
     {
-        ManageKicker.changeState(KickerState.Resting);
+        ManageKicker.changeState(KickerState.RESTING);
     }
 
     protected void interrupted() 

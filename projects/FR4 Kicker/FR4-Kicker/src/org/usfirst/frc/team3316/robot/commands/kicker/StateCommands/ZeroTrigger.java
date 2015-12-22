@@ -16,7 +16,7 @@ public class ZeroTrigger extends Command
 
     protected void execute() 
     {
-        ManageKicker.changeState(KickerState.Zeroing);
+        ManageKicker.changeState(KickerState.ZERO);
     }
 
     protected boolean isFinished() {return true;}

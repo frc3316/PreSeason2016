@@ -23,7 +23,7 @@ public class OverrideKickerToOff extends Command {
     // Called just before this Command runs the first time
     protected void initialize() 
     {
-        Robot.kicker.currentState = KickerState.Off;
+        Robot.kicker.currentState = KickerState.OFF;
     }
 
     // Called repeatedly when this Command is scheduled to run

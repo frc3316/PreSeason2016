@@ -17,11 +17,11 @@ public class TriggerRaiseAndZero extends Command
 
     protected void initialize() 
     {
-        if(Robot.kicker.currentState.equals(KickerState.Off))
+        if(Robot.kicker.currentState.equals(KickerState.OFF))
         {
             new RaiseSequence().start();
         }
-        else if(Robot.kicker.currentState.equals(KickerState.Resting))
+        else if(Robot.kicker.currentState.equals(KickerState.RESTING))
         {
             new ZeroTrigger().start();
         }

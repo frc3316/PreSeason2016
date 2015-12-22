@@ -15,13 +15,13 @@ public class RaiseTrigger extends Command
 
     protected void initialize() 
     {
-        ManageKicker.changeState(KickerState.Raising);
+        ManageKicker.changeState(KickerState.RAISING);
     }
 
     protected void execute() {}
 
     protected boolean isFinished() {
-        return Robot.kicker.currentState.equals(KickerState.Resting);
+        return Robot.kicker.currentState.equals(KickerState.RESTING);
 //          || Robot.kicker.currentState.equals(KickerState.Shaken);
     }
 

@@ -29,12 +29,12 @@ public class RaiseKickerForAuton extends Command
         counterToStart++;
         if (counterToStart >= 25) //.5 sec delay until the raising starts if needed
         {
-            ManageKicker.changeState(KickerState.Raising);
+            ManageKicker.changeState(KickerState.RAISING);
         }
     }
 
     protected boolean isFinished() {
-        return Robot.kicker.currentState.equals(KickerState.Resting);
+        return Robot.kicker.currentState.equals(KickerState.RESTING);
     }
 
     protected void end() {

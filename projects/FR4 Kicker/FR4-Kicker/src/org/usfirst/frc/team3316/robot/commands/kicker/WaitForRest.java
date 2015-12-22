@@ -26,7 +26,7 @@ public class WaitForRest extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        if(Robot.kicker.currentState.equals(KickerState.Resting) || Robot.kicker.currentState.equals(KickerState.Off))
+        if(Robot.kicker.currentState == KickerState.RESTING || Robot.kicker.currentState == KickerState.OFF)
             counter++;
     }
 

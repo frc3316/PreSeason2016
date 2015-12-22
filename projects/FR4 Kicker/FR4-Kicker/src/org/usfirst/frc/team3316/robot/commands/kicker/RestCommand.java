@@ -33,7 +33,7 @@ public class RestCommand extends Command
 
     protected void end() 
     {
-        ManageKicker.changeState(KickerState.Shaken);
+        ManageKicker.changeState(KickerState.SHAKEN);
     }
 
     protected void interrupted() {}
