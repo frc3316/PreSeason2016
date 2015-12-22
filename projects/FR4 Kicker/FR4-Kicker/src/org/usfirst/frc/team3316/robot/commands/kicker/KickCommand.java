@@ -38,11 +38,6 @@ public class KickCommand extends Command
 
     protected boolean isFinished() 
     {
-        /*if(((!RobotMap.gripperMSLeft.get()) && (!RobotMap.gripperMSMiddle.get()) && (!RobotMap.gripperMSRight.get()) ))
-        {
-            System.out.println(RobotMap.kickerEncoder.getDistance());
-            brakeCounter++;
-        }*/
         if (Robot.gripper.ballOut())
         {
             //System.out.println(RobotMap.kickerEncoder.getDistance());
@@ -56,22 +51,16 @@ public class KickCommand extends Command
         
         if(isTimedOut())
         {
-            ManageKicker.changeState(KickerState.Braking);
+            ManageKicker.changeState(KickerState.KICKING);
             System.out.println("Kicker Timed Out");
             return true;
         }
         else if(brakeCounter >= RobotConstants.getInt("KICKER_NUM_CYCLES"))
         {
-            ManageKicker.changeState(KickerState.Braking);
+            ManageKicker.changeState(KickerState.BRAKE);
             System.out.println("Ball Out of Gripper");
             return true;
         }
-        /*else if(RobotMap.kickerEncoder.getDistance() >= 200)
-        {
-            ManageKicker.changeState(KickerState.Braking);
-            System.out.println("Kicker reached angle");
-            return true;
-        }*/
         return false;
     }
 

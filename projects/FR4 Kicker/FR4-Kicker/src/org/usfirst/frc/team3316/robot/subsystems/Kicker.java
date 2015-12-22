@@ -6,7 +6,6 @@ package org.usfirst.frc.team3316.robot.subsystems;
 import org.usfirst.frc.team3316.robot.RobotConstants;
 import org.usfirst.frc.team3316.robot.RobotMap;
 import org.usfirst.frc.team3316.robot.commands.kicker.KickerState;
-import org.usfirst.frc.team3316.robot.commands.kicker.KickerState.State;
 import org.usfirst.frc.team3316.robot.commands.kicker.ManageKicker;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -16,7 +15,7 @@ public class Kicker extends Subsystem
     private double miniCIMScale;
     public ManageKicker manageKicker;
     
-    public State currentState = KickerState.Off;
+    public KickerState currentState = KickerState.OFF;
     
     public void initDefaultCommand() {
         manageKicker = new ManageKicker();

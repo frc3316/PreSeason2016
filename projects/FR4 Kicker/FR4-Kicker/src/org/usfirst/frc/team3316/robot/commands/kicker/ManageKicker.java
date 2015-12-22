@@ -6,7 +6,6 @@ package org.usfirst.frc.team3316.robot.commands.kicker;
 
 import org.usfirst.frc.team3316.robot.Robot;
 import org.usfirst.frc.team3316.robot.RobotMap;
-import org.usfirst.frc.team3316.robot.commands.kicker.KickerState.State;
 import org.usfirst.frc.team3316.robot.commands.sequences.ZeroSequence;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -33,13 +32,13 @@ public class ManageKicker extends Command
         {
             restCommand.cancel();
             restCommand = null;
-            Robot.kicker.currentState = KickerState.Resting;
+            Robot.kicker.currentState = KickerState.RESTING;
         }
         else
         {
-            Robot.kicker.currentState = KickerState.Off;
+            Robot.kicker.currentState = KickerState.OFF;
         }
-        SmartDashboard.putString("Current State", Robot.kicker.currentState.name);
+        SmartDashboard.putString("Current State", Robot.kicker.currentState.toString());
     }
     
     protected void initialize() 
@@ -110,7 +109,7 @@ public class ManageKicker extends Command
 
     protected void execute() 
     {
-        if(Robot.kicker.currentState.value == KickerState.Off.value)
+        if(Robot.kicker.currentState.equals(other)KickerState.OFF)
         {
             manageOff();
         }
@@ -141,96 +140,67 @@ public class ManageKicker extends Command
 
     }
 
-    public static State changeState(State to) // returns: current state
+    public static KickerState changeState(KickerState to) // returns: current state
     {
-        System.out.println("change from:" + Robot.kicker.currentState.name + " to: " + to.name);
-        
-        if(to.equals(KickerState.Raising))
-        {
-            if(Robot.kicker.currentState.equals(KickerState.Off))
-            {
-                //cr: add cancel command before nulling on all the other shit
-                raiseCommand.cancel();
-                raiseCommand = null;
-                Robot.kicker.currentState = KickerState.Raising;
-            }
-        }
-        else if(to.equals(KickerState.Resting))
-        {
-            if(Robot.kicker.currentState.equals(KickerState.Raising))
-            {
-                restCommand.cancel();
-                restCommand = null;
-                Robot.kicker.currentState = KickerState.Resting;
-            }
-            else if(Robot.kicker.currentState.equals(KickerState.Shaken))
-            {
-                restCommand.cancel();
-                restCommand = null;
-                Robot.kicker.currentState = KickerState.Resting;
-            }
-        }
-        else if(to.equals(KickerState.Shaken))
-        {
-            if(Robot.kicker.currentState.equals(KickerState.Resting))
-            {
-                shakeCommand.cancel();
-                shakeCommand = null;
-                Robot.kicker.currentState = KickerState.Shaken;
-            }
-        }
-        else if(to.equals(KickerState.Kicking))
-        {
-            if(Robot.kicker.currentState.equals(KickerState.Resting))
-            {
-                kickCommand.cancel();
-                kickCommand = null;
-                Robot.kicker.currentState = KickerState.Kicking;
-            }
-            else if(Robot.kicker.currentState.equals(KickerState.Off))
-            {
-                kickCommand.cancel();
-                kickCommand = null;
-                Robot.kicker.currentState = KickerState.Kicking;
-            }
-        }
-        else if(to.equals(KickerState.Braking))
-        {
-            if(Robot.kicker.currentState.equals(KickerState.Kicking))
-            {
-                brakeCommand.cancel();
-                brakeCommand = null;
-                Robot.kicker.currentState = KickerState.Braking;
-            }
-        }
-        else if(to.equals(KickerState.Zeroing))
-        {
-            if(Robot.kicker.currentState.equals(KickerState.Resting))
-            {
-                zeroCommand.cancel();
-                zeroCommand = null;
-                Robot.kicker.currentState = KickerState.Zeroing;
-            }
-            else if(Robot.kicker.currentState.equals(KickerState.Raising))
-            {
-                zeroCommand.cancel();
-                zeroCommand = null;
-                Robot.kicker.currentState = KickerState.Zeroing;
-            }
-        }
-        else if(to.equals(KickerState.Off))
-        {
-            if(Robot.kicker.currentState.equals(KickerState.Braking))
-            {
-                Robot.kicker.currentState = KickerState.Off;
-            }
-            else if(Robot.kicker.currentState.equals(KickerState.Zeroing))
-            {
-                Robot.kicker.currentState = KickerState.Off;
-            }
+        System.out.println("change from:" + Robot.kicker.currentState.toString() + " to: " + to.name);
+        switch (to) {
+        	case RAISING:
+        		if(Robot.kicker.currentState.equals(KickerState.OFF))
+                {
+                    raiseCommand.cancel();
+                    raiseCommand = null;
+                    Robot.kicker.currentState = KickerState.RAISING;
+                }
+        		
+        	case RESTING:
+        		if(Robot.kicker.currentState.equals(KickerState.RAISING) || Robot.kicker.currentState.equals(KickerState.SHAKEN))
+                {
+                    raiseCommand.cancel();
+                    raiseCommand = null;
+                    Robot.kicker.currentState = KickerState.RESTING;
+                }
+        	case SHAKEN:
+        		if(Robot.kicker.currentState.equals(KickerState.RESTING))
+                {
+                    shakeCommand.cancel();
+                    shakeCommand = null;
+                    Robot.kicker.currentState = KickerState.SHAKEN;
+                }
+        	case KICKING:
+        		if(Robot.kicker.currentState.equals(KickerState.RESTING) || Robot.kicker.currentState.equals(KickerState.OFF))
+                {
+                    kickCommand.cancel();
+                    kickCommand = null;
+                    Robot.kicker.currentState = KickerState.KICKING;
+                }
+        	case BRAKE:
+        		if(Robot.kicker.currentState.equals(KickerState.KICKING))
+                {
+                    brakeCommand.cancel();
+                    brakeCommand = null;
+                    Robot.kicker.currentState = KickerState.BRAKE;
+                }
+        	case ZERO:
+        	{
+        		if(Robot.kicker.currentState.equals(KickerState.RESTING) || Robot.kicker.currentState.equals(KickerState.RAISING))
+                {
+                    zeroCommand.cancel();
+                    zeroCommand = null;
+                    Robot.kicker.currentState = KickerState.ZERO;
+                }
+        	}
+        	case OFF:
+        		if(Robot.kicker.currentState.equals(KickerState.BRAKE))
+                {
+                    Robot.kicker.currentState = KickerState.OFF;
+                }
+                else if(Robot.kicker.currentState.equals(KickerState.ZERO))
+                {
+                    Robot.kicker.currentState = KickerState.OFF;
+                }
         }
         
-        SmartDashboard.putString("Current State", Robot.kicker.currentState.name);
+        SmartDashboard.putString("Current State", Robot.kicker.currentState.toString());
         return Robot.kicker.currentState;
     }
     
