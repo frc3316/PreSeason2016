@@ -19,7 +19,6 @@ public class Kicker extends Subsystem
     
     public void initDefaultCommand() {
         manageKicker = new ManageKicker();
-        setDefaultCommand(manageKicker);
         miniCIMScale = RobotConstants.get("MINICIM_SCALE");
     }
     

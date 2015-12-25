@@ -15,7 +15,7 @@ public class KickCommand extends Command
 { 
     private double kickVelocity;
     boolean left = true, middle = true, right = true;
-    DBugLogger logger = new DBugLogger();
+    DBugLogger logger = Robot.Logger;
     
     public KickCommand() 
     {

@@ -4,14 +4,19 @@
  */
 package org.usfirst.frc.team3316.robot.commands.kicker;
 
+import java.util.TimerTask;
+import java.util.logging.Logger;
+
 import org.usfirst.frc.team3316.robot.Robot;
 import org.usfirst.frc.team3316.robot.RobotMap;
 import org.usfirst.frc.team3316.robot.commands.sequences.ZeroSequence;
+import org.usfirst.frc.team3316.robot.logger.DBugLogger;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class ManageKicker extends Command {
+public class ManageKicker {
 	public static Command raiseCommand = null;
 	public static Command restCommand = null;
 	public static Command kickCommand = null;
@@ -19,9 +24,19 @@ public class ManageKicker extends Command {
 	public static Command zeroCommand = null;
 	public static Command shakeCommand = null;
 
+	DBugLogger logger = Robot.Logger;
+	
+	UpdateManager updateManager;
+	
 	public ManageKicker() {
-		setRunWhenDisabled(false);
-		requires(Robot.kicker);
+		restCommand = new RestCommand();
+		raiseCommand = new RaiseCommand();
+		kickCommand = new KickCommand();
+		brakeCommand = new BrakeCommand();
+		zeroCommand = new ZeroSequence();
+		shakeCommand = new ShakenCommand();
+		
+		setInitialState();
 	}
 
 	private void setInitialState() {
@@ -34,58 +49,54 @@ public class ManageKicker extends Command {
 		}
 		SmartDashboard.putString("Current State", Robot.kicker.currentState.toString());
 	}
-
-	protected void initialize() {
-		restCommand = new RestCommand();
-		raiseCommand = new RaiseCommand();
-		kickCommand = new KickCommand();
-		brakeCommand = new BrakeCommand();
-		zeroCommand = new ZeroSequence();
-		shakeCommand = new ShakenCommand();
-
-		setInitialState();
-	}
-
-	private void runCommand(KickerState to) {
-		switch (to) {
-		case OFF:
-			Robot.kicker.move(0);
-		case RAISING:
-			if (raiseCommand == null) {
-				raiseCommand = new RaiseCommand();
-				raiseCommand.start();
-			}
-		case RESTING:
-			if (restCommand == null) {
-				restCommand = new RestCommand();
-				restCommand.start();
-			}
-		case SHAKEN:
-			if (shakeCommand == null) {
-				shakeCommand = new ShakenCommand();
-				shakeCommand.start();
-			}
-		case KICKING:
-			if (kickCommand == null) {
-				kickCommand = new KickCommand();
-				kickCommand.start();
-			}
-		case BRAKE:
-			if (brakeCommand == null) {
-				brakeCommand = new BrakeCommand();
-				brakeCommand.start();
-			}
-		case ZERO:
-			if (zeroCommand == null) {
-				zeroCommand = new ZeroSequence();
-				zeroCommand.start();
+	
+	public class UpdateManager extends TimerTask {
+		public UpdateManager() {
+			logger.finest("UpdateManger task started");
+		}
+		
+		public void run () {
+			runCommand(Robot.kicker.currentState);
+		}
+		
+		private void runCommand(KickerState to) {
+			switch (to) {
+			case OFF:
+				Robot.kicker.move(0);
+			case RAISING:
+				if (raiseCommand == null) {
+					raiseCommand = new RaiseCommand();
+					raiseCommand.start();
+				}
+			case RESTING:
+				if (restCommand == null) {
+					restCommand = new RestCommand();
+					restCommand.start();
+				}
+			case SHAKEN:
+				if (shakeCommand == null) {
+					shakeCommand = new ShakenCommand();
+					shakeCommand.start();
+				}
+			case KICKING:
+				if (kickCommand == null) {
+					kickCommand = new KickCommand();
+					kickCommand.start();
+				}
+			case BRAKE:
+				if (brakeCommand == null) {
+					brakeCommand = new BrakeCommand();
+					brakeCommand.start();
+				}
+			case ZERO:
+				if (zeroCommand == null) {
+					zeroCommand = new ZeroSequence();
+					zeroCommand.start();
+				}
 			}
 		}
 	}
 
-	protected void execute() {
-		runCommand(Robot.kicker.currentState);
-	}
 
 	public static KickerState changeState(KickerState to) // returns: current
 															// state
@@ -144,17 +155,10 @@ public class ManageKicker extends Command {
 		SmartDashboard.putString("Current State", Robot.kicker.currentState.toString());
 		return Robot.kicker.currentState;
 	}
-
-	protected boolean isFinished() {
-		return false;
+	
+	public void timerInit()
+	{
+		updateManager = new UpdateManager();
+		Robot.timer.s
 	}
-
-	protected void end() {
-		setInitialState();
-	}
-
-	protected void interrupted() {
-		end();
-	}
-
 }

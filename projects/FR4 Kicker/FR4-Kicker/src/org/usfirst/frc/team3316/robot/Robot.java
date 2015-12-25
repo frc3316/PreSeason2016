@@ -5,6 +5,7 @@ package org.usfirst.frc.team3316.robot;
 
 import org.usfirst.frc.team3316.robot.commands.auton.AutonomousReport;
 import org.usfirst.frc.team3316.robot.commands.auton.AutonomousSequence;
+import org.usfirst.frc.team3316.robot.commands.kicker.ManageKicker;
 import org.usfirst.frc.team3316.robot.commands.sequences.InitializeTeleop;
 import org.usfirst.frc.team3316.robot.commands.vision.TargetVision;
 import org.usfirst.frc.team3316.robot.subsystems.Chassis;
@@ -14,8 +15,10 @@ import org.usfirst.frc.team3316.robot.subsystems.Kicker;
 import org.usfirst.frc.team3316.robot.subsystems.Roller;
 import org.usfirst.frc.team3316.robot.subsystems.Shifter;
 import org.usfirst.frc.team3316.robot.utils.NullSubsystem;
+import org.usfirst.frc.team3316.robot.logger.DBugLogger;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -36,8 +39,11 @@ public class Robot extends IterativeRobot
     public static RobotConstants constants;
     public static TargetVision target;
     public static AutonomousReport autonReport;
-    
+    public static Timer timer;
     public static OI oi;
+    public static ManageKicker manageKicker;
+    
+    public static DBugLogger Logger = new DBugLogger();
     
     public void robotInit() 
     {       
@@ -55,10 +61,14 @@ public class Robot extends IterativeRobot
         defender = new Defender();
         roller = new Roller();
         autonReport = new AutonomousReport();
+        manageKicker = new ManageKicker();
         
         oi = new OI();
         
         autonomousCommand = new AutonomousSequence();     
+        
+        timer = new Timer();
+        manageKicker.timerInit();
     }
 
     public void autonomousInit() 
