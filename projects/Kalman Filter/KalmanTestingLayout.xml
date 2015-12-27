@@ -1,0 +1,68 @@
+<xml version="1.0">
+<dashboard>
+	<widget field="Kalman Covariance" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="972" y="321"/>
+		<property name="Buffer Size (samples)" value="200"/>
+	</widget>
+	<widget field="Kalman State" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="566" y="321"/>
+		<property name="Buffer Size (samples)" value="200"/>
+	</widget>
+	<widget field="Accelerometer Y" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="971" y="6"/>
+		<property name="Buffer Size (samples)" value="200"/>
+	</widget>
+	<widget field="Encoder Accel" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="563" y="6"/>
+		<property name="Buffer Size (samples)" value="200"/>
+	</widget>
+	<widget field="Stacker setMotors value: " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="321" y="207"/>
+	</widget>
+	<widget field="Navx Enabled" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="321" y="165"/>
+	</widget>
+	<widget field="RobotOrientedDrive" type="Command" class="edu.wpi.first.smartdashboard.gui.elements.Command">
+		<location x="321" y="131"/>
+	</widget>
+	<widget field="Encoder Center Speed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="321" y="110"/>
+	</widget>
+	<widget field="FieldOrientedDrive" type="Command" class="edu.wpi.first.smartdashboard.gui.elements.Command">
+		<location x="321" y="76"/>
+	</widget>
+	<widget field="SetHeadingSDB" type="Command" class="edu.wpi.first.smartdashboard.gui.elements.Command">
+		<location x="321" y="42"/>
+	</widget>
+	<widget field="chassis_RobotOrientedDrivePIDRotation_UsePIDRotation" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="-24" y="543"/>
+	</widget>
+	<widget field="Encoder Left Speed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="330" y="251"/>
+	</widget>
+	<widget field="Current Heading" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="321" y="0"/>
+	</widget>
+	<widget field="UpdateVariablesInConfig" type="Command" class="edu.wpi.first.smartdashboard.gui.elements.Command">
+		<location x="0" y="439"/>
+	</widget>
+	<widget field="chassis_HeadingToSet" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="418"/>
+	</widget>
+	<widget field="Zero Heading" type="Command" class="edu.wpi.first.smartdashboard.gui.elements.Command">
+		<location x="0" y="384"/>
+	</widget>
+	<widget field="Encoder Right Speed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="324" y="273"/>
+	</widget>
+	<widget field="TankDrive" type="Command" class="edu.wpi.first.smartdashboard.gui.elements.Command">
+		<location x="0" y="262"/>
+	</widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
+		<location x="0" y="0"/>
+	</static-widget>
+</dashboard>
+<live-window>
+</live-window>
+	<hidden field="Auton Chooser"/>
+</xml>
