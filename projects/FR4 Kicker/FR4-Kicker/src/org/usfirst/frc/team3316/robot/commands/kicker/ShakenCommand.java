@@ -8,6 +8,7 @@ import org.usfirst.frc.team3316.robot.RobotConstants;
 import org.usfirst.frc.team3316.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ShakenCommand extends Command 
 {
@@ -37,6 +38,7 @@ public class ShakenCommand extends Command
         {
             counter++;
         }
+        SmartDashboard.putNumber("COUNTER", counter);
 //        System.out.println("Shaken_Kicker_Counte" + counter);
         //return counter >= RobotConstants.get("SHAKEN_KICKER_COUNTER");
         return counter >= 3;//SmartDashboard.getNumber("SHAKEN_KICKER_COUNTER");

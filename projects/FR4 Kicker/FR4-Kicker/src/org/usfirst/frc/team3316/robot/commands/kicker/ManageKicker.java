@@ -25,9 +25,9 @@ public class ManageKicker {
 	public static Command shakeCommand = null;
 
 	DBugLogger logger = Robot.Logger;
-	
-	UpdateManager updateManager;
-	
+
+	TimerTask updateManager;
+
 	public ManageKicker() {
 		restCommand = new RestCommand();
 		raiseCommand = new RaiseCommand();
@@ -35,7 +35,7 @@ public class ManageKicker {
 		brakeCommand = new BrakeCommand();
 		zeroCommand = new ZeroSequence();
 		shakeCommand = new ShakenCommand();
-		
+		timerInit();
 		setInitialState();
 	}
 
@@ -49,16 +49,16 @@ public class ManageKicker {
 		}
 		SmartDashboard.putString("Current State", Robot.kicker.currentState.toString());
 	}
-	
+
 	public class UpdateManager extends TimerTask {
 		public UpdateManager() {
 			logger.finest("UpdateManger task started");
 		}
-		
-		public void run () {
+
+		public void run() {
 			runCommand(Robot.kicker.currentState);
 		}
-		
+
 		private void runCommand(KickerState to) {
 			switch (to) {
 			case OFF:
@@ -97,7 +97,6 @@ public class ManageKicker {
 		}
 	}
 
-
 	public static KickerState changeState(KickerState to) // returns: current
 															// state
 	{
@@ -105,42 +104,54 @@ public class ManageKicker {
 		switch (to) {
 		case RAISING:
 			if (Robot.kicker.currentState.equals(KickerState.OFF)) {
-				raiseCommand.cancel();
-				raiseCommand = null;
+				if (raiseCommand != null) {
+					raiseCommand.cancel();
+					raiseCommand = null;
+				}
 				Robot.kicker.currentState = KickerState.RAISING;
 			}
 
 		case RESTING:
 			if (Robot.kicker.currentState.equals(KickerState.RAISING)
 					|| Robot.kicker.currentState.equals(KickerState.SHAKEN)) {
-				raiseCommand.cancel();
-				raiseCommand = null;
+				if (restCommand != null) {
+					restCommand.cancel();
+					restCommand = null;
+				}
 				Robot.kicker.currentState = KickerState.RESTING;
 			}
 		case SHAKEN:
 			if (Robot.kicker.currentState.equals(KickerState.RESTING)) {
-				shakeCommand.cancel();
-				shakeCommand = null;
+				if (shakeCommand != null) {
+					shakeCommand.cancel();
+					shakeCommand = null;
+				}
 				Robot.kicker.currentState = KickerState.SHAKEN;
 			}
 		case KICKING:
 			if (Robot.kicker.currentState.equals(KickerState.RESTING)
 					|| Robot.kicker.currentState.equals(KickerState.OFF)) {
-				kickCommand.cancel();
-				kickCommand = null;
+				if (kickCommand != null) {
+					kickCommand.cancel();
+					kickCommand = null;
+				}
 				Robot.kicker.currentState = KickerState.KICKING;
 			}
 		case BRAKE:
 			if (Robot.kicker.currentState.equals(KickerState.KICKING)) {
-				brakeCommand.cancel();
-				brakeCommand = null;
+				if (brakeCommand != null) {
+					brakeCommand.cancel();
+					brakeCommand = null;
+				}
 				Robot.kicker.currentState = KickerState.BRAKE;
 			}
 		case ZERO: {
 			if (Robot.kicker.currentState.equals(KickerState.RESTING)
 					|| Robot.kicker.currentState.equals(KickerState.RAISING)) {
-				zeroCommand.cancel();
-				zeroCommand = null;
+				if (zeroCommand != null) {
+					zeroCommand.cancel();
+					zeroCommand = null;
+				}
 				Robot.kicker.currentState = KickerState.ZERO;
 			}
 		}
@@ -155,10 +166,9 @@ public class ManageKicker {
 		SmartDashboard.putString("Current State", Robot.kicker.currentState.toString());
 		return Robot.kicker.currentState;
 	}
-	
-	public void timerInit()
-	{
+
+	public void timerInit() {
 		updateManager = new UpdateManager();
-		Robot.timer.s
+		Robot.GetTimer().schedule(updateManager, 0, 20);
 	}
 }
