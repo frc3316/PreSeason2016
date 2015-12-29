@@ -15,7 +15,7 @@ import org.usfirst.frc.team3316.robot.logger.DBugLogger;
 
 public class Config 
 {
-	//DBugLogger logger = Robot.logger;
+	DBugLogger logger = Robot.logger;
 	
 	public boolean robotA; //true if it's robot A, false if it's robot B
 	
@@ -58,22 +58,22 @@ public class Config
 			if (line.equals("Robot A"))
 			{
 				robotA = true;
-				//logger.info(" This is Robot A");
+				logger.info(" This is Robot A");
 			}
 			else
 			{
 				robotA = false;
-				//logger.info(" This is Robot B");
+				logger.info(" This is Robot B");
 			}
 		} 
 		catch (FileNotFoundException e) 
 		{
-			//logger.severe(e);
+			logger.severe(e);
 			System.exit(1);
 		} 
 		catch (IOException e) 
 		{
-			//logger.severe(e);
+			logger.severe(e);
 		}
 	}
 	
@@ -109,12 +109,12 @@ public class Config
 		if (variables.containsKey(key))
 		{
 			variables.replace(key, value);
-			//logger.info("replaced " + key + " in variables hashtable");
+			logger.info("replaced " + key + " in variables hashtable");
 		}
 		else
 		{
 			variables.put(key, value);
-			//logger.info("added " + key + " in variables hashtable");
+			logger.info("added " + key + " in variables hashtable");
 		}
 	}
 	
@@ -143,24 +143,24 @@ public class Config
 			Set <Entry <String, Object> > set;
 			
 			set = constants.entrySet();
-			//logger.info(" Logging Constants");
+			logger.info(" Logging Constants");
 			for (Entry <String, Object> entry : set)
 			{
-				//logger.info(" Key = " + entry.getKey() + " Value = " + entry.getValue());
+				logger.info(" Key = " + entry.getKey() + " Value = " + entry.getValue());
 			}
 			
 			set = variables.entrySet();
-			//logger.info(" Logging Variables");
+			logger.info(" Logging Variables");
 			for (Entry <String, Object> entry : set)
 			{
-				//logger.info(" Key = " + entry.getKey() + " Value = " + entry.getValue());
+				logger.info(" Key = " + entry.getKey() + " Value = " + entry.getValue());
 			}
 			
 			input.close();
 		} 
 		catch (Exception e) 
 		{
-			//logger.severe(e);
+			logger.severe(e);
 		}
 	}
 }

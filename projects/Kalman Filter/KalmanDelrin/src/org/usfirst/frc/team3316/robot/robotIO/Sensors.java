@@ -60,15 +60,15 @@ public class Sensors
 		{
 			session = NIVision.IMAQdxOpenCamera("cam0",
 	                NIVision.IMAQdxCameraControlMode.CameraControlModeController);
-	        //logger.info("Session is " + session);
+	        logger.info("Session is " + session);
 	        cameraFound = true;
 			NIVision.IMAQdxConfigureGrab(session);
 			NIVision.IMAQdxStartAcquisition(session);
 		}
 		catch (Exception e)
 		{
-			//logger.severe("Camera not found!");
-			//logger.severe(e);
+			logger.severe("Camera not found!");
+			logger.severe(e);
 			session = -1;
 			cameraFound = false;
 		}
@@ -126,7 +126,7 @@ public class Sensors
 		
 		catch (ConfigException e)
 		{
-			//logger.severe(e);
+			logger.severe(e);
 		}
 	}
 	

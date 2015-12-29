@@ -159,7 +159,7 @@ public class Chassis extends Subsystem {
 		public double previousTime = 0;
 
 		boolean predicting = true;
-		
+
 		public KalmanTask() {
 			kalman = new KalmanFilter();
 
@@ -185,9 +185,7 @@ public class Chassis extends Subsystem {
 
 			z = new DenseMatrix64F(2, 1);
 
-			R = new DenseMatrix64F(new double[][] { 
-				{ 0.16, 0 }, 
-				{ 0, 0.16 } });
+			R = new DenseMatrix64F(new double[][] { { 0.16, 0 }, { 0, 0.16 } });
 		}
 
 		public void run() 
@@ -197,42 +195,33 @@ public class Chassis extends Subsystem {
 				previousTime = System.currentTimeMillis();
 			}
 
-			if (predicting)
+			if (predicting) 
 			{
-				kalman.predict(u);
-			}
-			else
+				kalman.predict(u);	
+			} 
+			
+			else 
 			{
 				double currentTime = System.currentTimeMillis();
 				double currentEncoderSpeed = (getSpeedLeft() + getSpeedRight()) / 2;
-	
+
 				double dt = (currentTime - previousTime) / 1000;
-				
+
 				encoderAccel = (currentEncoderSpeed - prevEncoderSpeed) / (dt);
-				
-				logger.finest("Time delta is: " + dt);
-	
+
 				z.set(0, 0, getAccelY());
-	
+
 				z.set(1, 0, getAccelEncoders());
-	
+
 				kalman.update(z, R);
-	
+
 				previousTime = currentTime;
 				prevEncoderSpeed = currentEncoderSpeed;
-	
+
 				kalmanState = kalman.getState().get(0);
 				kalmanCovariance = kalman.getCovariance().get(0);
-	
-				if (recording) {
-					logger.finest("Accelerometer: " + getAccelY());
-					logger.finest("Encoders: " + getAccelEncoders());
-	
-					logger.finest("Updated State: " + getKalmanState());
-					logger.finest("Updated Covariance: " + getKalmanCovariance());
-				}
 			}
-			
+
 			predicting = !predicting;
 		}
 	}
@@ -420,7 +409,7 @@ public class Chassis extends Subsystem {
 			rightScale = (double) config.get("chassis_RightScale");
 			centerScale = (double) config.get("chassis_CenterScale");
 		} catch (ConfigException e) {
-			// logger.severe(e);
+			logger.severe(e);
 		}
 	}
 
@@ -430,7 +419,7 @@ public class Chassis extends Subsystem {
 			rightEncoderScale = (double) config.get("chassis_RightEncoderScale");
 			centerEncoderScale = (double) config.get("chassis_CenterEncoderScale");
 		} catch (ConfigException e) {
-			// logger.severe(e);
+			logger.severe(e);
 		}
 	}
 

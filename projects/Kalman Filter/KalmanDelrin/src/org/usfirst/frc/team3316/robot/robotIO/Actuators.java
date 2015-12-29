@@ -112,7 +112,7 @@ public class Actuators
 		}
 		catch (ConfigException e) 
     	{
-			//logger.severe(e);
+			logger.severe(e);
 		}
 	}
 }
