@@ -15,6 +15,7 @@ import org.usfirst.frc.team3316.robot.chassis.commands.RobotOrientedNavigation;
 import org.usfirst.frc.team3316.robot.chassis.commands.TankDrive;
 import org.usfirst.frc.team3316.robot.chassis.heading.SetHeadingPreset;
 import org.usfirst.frc.team3316.robot.chassis.heading.SetHeadingSDB;
+import org.usfirst.frc.team3316.robot.commands.KalmanRecord;
 import org.usfirst.frc.team3316.robot.chassis.commands.RobotOrientedDrive;
 import org.usfirst.frc.team3316.robot.config.Config;
 import org.usfirst.frc.team3316.robot.config.Config.ConfigException;
@@ -43,7 +44,7 @@ public class SDB
 	{
 		public UpdateSDBTask()
 		{
-			logger.info("Created UpdateSDBTask");
+			//logger.info("Created UpdateSDBTask");
 		}
 
 		public void run()
@@ -74,6 +75,7 @@ public class SDB
 			put("Kalman State", Robot.chassis.getKalmanState());
 			put("Kalman Covariance", Robot.chassis.getKalmanCovariance());
 
+			put("Kalman Recording", Robot.chassis.recording);
 		}
 
 		private void put(String name, double d)
@@ -97,7 +99,7 @@ public class SDB
 		}
 	}
 
-	DBugLogger logger = Robot.logger;
+	//DBugLogger logger = Robot.logger;
 	Config config = Robot.config;
 
 	private Image frame;
@@ -121,7 +123,7 @@ public class SDB
 	public void timerInit()
 	{
 		updateSDBTask = new UpdateSDBTask();
-		Robot.timer.schedule(updateSDBTask, 0, 100);
+		Robot.timer.schedule(updateSDBTask, 0, 10);
 	}
 
 	/**
@@ -157,20 +159,20 @@ public class SDB
 			if (!constant)
 			{
 				variablesInSDB.put(key, type);
-				logger.info("Added to SDB " + key + " of type " + type
-						+ "and allows for its modification");
+				//logger.info("Added to SDB " + key + " of type " + type
+				//		+ "and allows for its modification");
 			}
 			else
 			{
-				logger.info("Added to SDB " + key + " of type " + type
-						+ "BUT DOES NOT ALLOW for its modification");
+				//logger.info("Added to SDB " + key + " of type " + type
+				//		+ "BUT DOES NOT ALLOW for its modification");
 			}
 
 			return true;
 		}
 		catch (ConfigException e)
 		{
-			logger.severe(e);
+			//logger.severe(e);
 		}
 		return false;
 	}
@@ -184,6 +186,8 @@ public class SDB
 	{
 		SmartDashboard.putData(new UpdateVariablesInConfig()); // NEVER REMOVE
 																// THIS COMMAND
+		
+		SmartDashboard.putData(new KalmanRecord());
 
 		/*
 		 * Basic Drives
@@ -207,6 +211,6 @@ public class SDB
 
 		putConfigVariableInSDB("chassis_HeadingToSet");
 		
-		logger.info("Finished initSDB()");
+		//logger.info("Finished initSDB()");
 	}
 }

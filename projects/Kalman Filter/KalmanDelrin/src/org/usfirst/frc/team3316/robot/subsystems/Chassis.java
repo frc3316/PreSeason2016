@@ -22,17 +22,14 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class Chassis extends Subsystem
-{
+public class Chassis extends Subsystem {
 	/*
 	 * An object that is passed to NavigationThread for integration
 	 */
-	public static class NavigationIntegrator
-	{
+	public static class NavigationIntegrator {
 		private double x = 0, y = 0, heading = 0;
 
-		public void add(double dX, double dY, double dTheta)
-		{
+		public void add(double dX, double dY, double dTheta) {
 			this.x += dX;
 			this.y += dY;
 			this.heading += dTheta;
@@ -45,16 +42,14 @@ public class Chassis extends Subsystem
 		/**
 		 * Return change in X that has been integrated
 		 */
-		public double getX()
-		{
+		public double getX() {
 			return x;
 		}
 
 		/**
 		 * Return change in Y that has been integrated
 		 */
-		public double getY()
-		{
+		public double getY() {
 			return y;
 		}
 
@@ -62,8 +57,7 @@ public class Chassis extends Subsystem
 		 * Return change in heading that has been integrated. Heading returned
 		 * is in the range (-180) to (180)
 		 */
-		public double getHeading()
-		{
+		public double getHeading() {
 			return heading;
 		}
 	}
@@ -73,22 +67,18 @@ public class Chassis extends Subsystem
 	 * y, and theta delta and adds it to each integrator in the set Also
 	 * calculates turning rate in chassis
 	 */
-	private class NavigationTask extends TimerTask
-	{
+	private class NavigationTask extends TimerTask {
 		private HashSet<NavigationIntegrator> integratorSet;
 		private double previousTime = 0;
 		private double previousS = 0, previousF = 0, previousHeading = 0;
 
-		public NavigationTask()
-		{
+		public NavigationTask() {
 			integratorSet = new HashSet<NavigationIntegrator>();
 		}
 
-		public void run()
-		{
+		public void run() {
 			// Makes sure the first time delta will not be since 1970
-			if (previousTime == 0)
-			{
+			if (previousTime == 0) {
 				previousTime = System.currentTimeMillis();
 			}
 			/*
@@ -129,18 +119,14 @@ public class Chassis extends Subsystem
 			 * Adds all of the deltas to each integrator, relatively to its
 			 * starting position
 			 */
-			for (NavigationIntegrator integrator : integratorSet)
-			{
+			for (NavigationIntegrator integrator : integratorSet) {
 				double dX, dY; // speeds relative to the orientation that the
 								// integrator started at
 				// headingRad is the average of the previous integrator angle
 				// and the angle it will have (in radians)
-				double headingRad = (Math
-						.toRadians(integrator.getHeading() + dTheta / 2));
-				dX = (dF * Math.sin(headingRad))
-						+ (dS * Math.sin(headingRad + (0.5 * Math.PI)));
-				dY = (dF * Math.cos(headingRad))
-						+ (dS * Math.cos(headingRad + (0.5 * Math.PI)));
+				double headingRad = (Math.toRadians(integrator.getHeading() + dTheta / 2));
+				dX = (dF * Math.sin(headingRad)) + (dS * Math.sin(headingRad + (0.5 * Math.PI)));
+				dY = (dF * Math.cos(headingRad)) + (dS * Math.cos(headingRad + (0.5 * Math.PI)));
 
 				integrator.add(dX, dY, dTheta);
 			}
@@ -154,19 +140,16 @@ public class Chassis extends Subsystem
 			previousF = currentF;
 		}
 
-		public boolean addIntegrator(NavigationIntegrator integrator)
-		{
+		public boolean addIntegrator(NavigationIntegrator integrator) {
 			return integratorSet.add(integrator);
 		}
 
-		public boolean removeIntegrator(NavigationIntegrator integrator)
-		{
+		public boolean removeIntegrator(NavigationIntegrator integrator) {
 			return integratorSet.remove(integrator);
 		}
 	}
 
-	private class KalmanTask extends TimerTask
-	{
+	private class KalmanTask extends TimerTask {
 		public KalmanFilter kalman;
 
 		DenseMatrix64F F, B, Q, H;
@@ -175,15 +158,16 @@ public class Chassis extends Subsystem
 		public double prevEncoderSpeed = 0;
 		public double previousTime = 0;
 
-		public KalmanTask()
-		{
+		boolean predicting = true;
+		
+		public KalmanTask() {
 			kalman = new KalmanFilter();
 
 			F = new DenseMatrix64F(new double[][] { { 1 } });
 
 			B = new DenseMatrix64F(new double[][] { { 0 } });
 
-			Q = new DenseMatrix64F(new double[][] { { 0.0001 } });
+			Q = new DenseMatrix64F(new double[][] { { 0.1 } });
 
 			H = new DenseMatrix64F(new double[][] { { 1 }, { 1 } });
 
@@ -193,7 +177,7 @@ public class Chassis extends Subsystem
 
 			x = new DenseMatrix64F(new double[][] { { 0 } });
 
-			P = new DenseMatrix64F(new double[][] { { 1 } });
+			P = new DenseMatrix64F(new double[][] { { 1000 } });
 
 			kalman.setState(x, P);
 
@@ -201,34 +185,55 @@ public class Chassis extends Subsystem
 
 			z = new DenseMatrix64F(2, 1);
 
-			R = new DenseMatrix64F(new double[][] { { 0.1, 0 }, { 0, 0.1 } });
+			R = new DenseMatrix64F(new double[][] { 
+				{ 0.16, 0 }, 
+				{ 0, 0.16 } });
 		}
 
-		public void run()
+		public void run() 
 		{
-			if (previousTime == 0)
+			if (previousTime == 0) 
 			{
 				previousTime = System.currentTimeMillis();
 			}
 
-			kalman.predict(u);
-
-			double currentTime = System.currentTimeMillis();
-			double currentEncoderSpeed = (getSpeedLeft() + getSpeedRight()) / 2;
-
-			encoderAccel = (currentEncoderSpeed - prevEncoderSpeed)
-					/ (currentTime - previousTime);
-
-			z.set(0, 0, getAccelY());
-			z.set(1, 0, getAccelEncoders());
-
-			kalman.update(z, R);
-
-			previousTime = currentTime;
-			prevEncoderSpeed = currentEncoderSpeed;
-
-			kalmanState = kalman.getState().get(0);
-			kalmanCovariance = kalman.getCovariance().get(0);
+			if (predicting)
+			{
+				kalman.predict(u);
+			}
+			else
+			{
+				double currentTime = System.currentTimeMillis();
+				double currentEncoderSpeed = (getSpeedLeft() + getSpeedRight()) / 2;
+	
+				double dt = (currentTime - previousTime) / 1000;
+				
+				encoderAccel = (currentEncoderSpeed - prevEncoderSpeed) / (dt);
+				
+				logger.finest("Time delta is: " + dt);
+	
+				z.set(0, 0, getAccelY());
+	
+				z.set(1, 0, getAccelEncoders());
+	
+				kalman.update(z, R);
+	
+				previousTime = currentTime;
+				prevEncoderSpeed = currentEncoderSpeed;
+	
+				kalmanState = kalman.getState().get(0);
+				kalmanCovariance = kalman.getCovariance().get(0);
+	
+				if (recording) {
+					logger.finest("Accelerometer: " + getAccelY());
+					logger.finest("Encoders: " + getAccelEncoders());
+	
+					logger.finest("Updated State: " + getKalmanState());
+					logger.finest("Updated Covariance: " + getKalmanCovariance());
+				}
+			}
+			
+			predicting = !predicting;
 		}
 	}
 
@@ -258,6 +263,7 @@ public class Chassis extends Subsystem
 
 	private double kalmanState = 0, kalmanCovariance = 0; // calculated by
 															// kalman filter
+	public boolean recording = true;
 
 	Drive defaultDrive;
 
@@ -265,8 +271,7 @@ public class Chassis extends Subsystem
 
 	public boolean navxEnabled = true;
 
-	public Chassis()
-	{
+	public Chassis() {
 		left1 = Robot.actuators.chassisMotorControllerLeft1;
 		left2 = Robot.actuators.chassisMotorControllerLeft2;
 
@@ -282,23 +287,20 @@ public class Chassis extends Subsystem
 		encoderCenter = Robot.sensors.chassisEncoderCenter;
 	}
 
-	public void timerInit()
-	{
+	public void timerInit() {
 		navigationTask = new NavigationTask();
-		Robot.timer.scheduleAtFixedRate(navigationTask, 0, 50);
+		Robot.timer.schedule(navigationTask, 0, 50);
 
 		kalmanTask = new KalmanTask();
-		Robot.timer.scheduleAtFixedRate(kalmanTask, 0, 20);
+		Robot.timer.schedule(kalmanTask, 0, 20);
 	}
 
-	public void initDefaultCommand()
-	{
+	public void initDefaultCommand() {
 		defaultDrive = new FieldOrientedDrive();
 		setDefaultCommand(defaultDrive);
 	}
 
-	public boolean set(double left, double right, double center)
-	{
+	public boolean set(double left, double right, double center) {
 		updateScales();
 
 		this.left1.set(left * leftScale);
@@ -315,8 +317,7 @@ public class Chassis extends Subsystem
 	/*
 	 * Heading
 	 */
-	public double getHeading()
-	{
+	public double getHeading() {
 		double headingToReturn = navx.getYaw() + headingOffset;
 		headingToReturn = fixHeading(headingToReturn);
 
@@ -329,8 +330,7 @@ public class Chassis extends Subsystem
 	 * @param headingToSet
 	 *            the angle specified
 	 */
-	public void setHeading(double headingToSet)
-	{
+	public void setHeading(double headingToSet) {
 		double currentHeading = getHeading();
 		double currentOffset = headingOffset;
 
@@ -340,28 +340,24 @@ public class Chassis extends Subsystem
 	/*
 	 * Angular velocity
 	 */
-	public double getAngularVelocity()
-	{
+	public double getAngularVelocity() {
 		return angularVelocity;
 	}
 
 	/*
 	 * Distance
 	 */
-	public double getDistanceLeft()
-	{
+	public double getDistanceLeft() {
 		updateEncoderScales();
 		return encoderLeft.getDistance() * leftEncoderScale;
 	}
 
-	public double getDistanceRight()
-	{
+	public double getDistanceRight() {
 		updateEncoderScales();
 		return encoderRight.getDistance() * rightEncoderScale;
 	}
 
-	public double getDistanceCenter()
-	{
+	public double getDistanceCenter() {
 		updateEncoderScales();
 		return encoderCenter.getDistance() * centerEncoderScale;
 	}
@@ -369,20 +365,17 @@ public class Chassis extends Subsystem
 	/*
 	 * Speed
 	 */
-	public double getSpeedLeft()
-	{
+	public double getSpeedLeft() {
 		updateEncoderScales();
 		return encoderLeft.getRate() * leftEncoderScale;
 	}
 
-	public double getSpeedRight()
-	{
+	public double getSpeedRight() {
 		updateEncoderScales();
 		return encoderRight.getRate() * rightEncoderScale;
 	}
 
-	public double getSpeedCenter()
-	{
+	public double getSpeedCenter() {
 		updateEncoderScales();
 		return encoderCenter.getRate() * centerEncoderScale;
 	}
@@ -390,85 +383,64 @@ public class Chassis extends Subsystem
 	/*
 	 * Acceleration
 	 */
-	public double getAccelX()
-	{
+	public double getAccelX() {
 		return navx.getWorldLinearAccelX() * G;
 	}
 
-	public double getAccelY()
-	{
+	public double getAccelY() {
 		return navx.getWorldLinearAccelY() * G;
 	}
-	
-	public double getAccelEncoders ()
-	{
+
+	public double getAccelEncoders() {
 		return encoderAccel;
 	}
 
-	public double getKalmanState()
-	{
+	public double getKalmanState() {
 		return kalmanState;
 	}
 
-	public double getKalmanCovariance()
-	{
+	public double getKalmanCovariance() {
 		return kalmanCovariance;
 	}
 
 	/*
 	 * Navigation integrator
 	 */
-	public boolean addNavigationIntegrator(NavigationIntegrator integrator)
-	{
+	public boolean addNavigationIntegrator(NavigationIntegrator integrator) {
 		return navigationTask.addIntegrator(integrator);
 	}
 
-	public boolean removeNavigationIntegrator(NavigationIntegrator integrator)
-	{
+	public boolean removeNavigationIntegrator(NavigationIntegrator integrator) {
 		return navigationTask.removeIntegrator(integrator);
 	}
 
-	private void updateScales()
-	{
-		try
-		{
+	private void updateScales() {
+		try {
 			leftScale = (double) config.get("chassis_LeftScale");
 			rightScale = (double) config.get("chassis_RightScale");
 			centerScale = (double) config.get("chassis_CenterScale");
-		}
-		catch (ConfigException e)
-		{
-			logger.severe(e);
+		} catch (ConfigException e) {
+			// logger.severe(e);
 		}
 	}
 
-	private void updateEncoderScales()
-	{
-		try
-		{
+	private void updateEncoderScales() {
+		try {
 			leftEncoderScale = (double) config.get("chassis_LeftEncoderScale");
-			rightEncoderScale = (double) config
-					.get("chassis_RightEncoderScale");
-			centerEncoderScale = (double) config
-					.get("chassis_CenterEncoderScale");
-		}
-		catch (ConfigException e)
-		{
-			logger.severe(e);
+			rightEncoderScale = (double) config.get("chassis_RightEncoderScale");
+			centerEncoderScale = (double) config.get("chassis_CenterEncoderScale");
+		} catch (ConfigException e) {
+			// logger.severe(e);
 		}
 	}
 
 	// Returns the same heading in the range (-180) to (180)
-	private static double fixHeading(double heading)
-	{
+	private static double fixHeading(double heading) {
 		double toReturn = heading % 360;
 
-		if (toReturn < -180)
-		{
+		if (toReturn < -180) {
 			toReturn += 360;
-		}
-		else if (toReturn > 180)
-		{
+		} else if (toReturn > 180) {
 			toReturn -= 360;
 		}
 		return toReturn;

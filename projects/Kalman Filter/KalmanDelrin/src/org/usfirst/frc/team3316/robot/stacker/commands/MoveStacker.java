@@ -58,7 +58,7 @@ public abstract class MoveStacker extends Command
 
 	protected void initialize()
 	{
-		logger.fine(this.getName() + " initialize");
+		//logger.fine(this.getName() + " initialize");
 
 		unbrake.start();
 		brakeStarted = false;
@@ -79,11 +79,11 @@ public abstract class MoveStacker extends Command
 		{
 			if (isTimedOut())
 			{
-				logger.info(this.getName() + " finished because timed out");
+				//logger.info(this.getName() + " finished because timed out");
 			}
 			else
 			{
-				logger.info(this.getName() + " finished because reached target");
+				//logger.info(this.getName() + " finished because reached target");
 			}
 
 			return true;
@@ -100,13 +100,13 @@ public abstract class MoveStacker extends Command
 
 	protected void end()
 	{
-		logger.fine(this.getName() + " end");
+		//logger.fine(this.getName() + " end");
 		__end();
 	}
 
 	protected void interrupted()
 	{
-		logger.fine(this.getName() + " interrupted");
+		//logger.fine(this.getName() + " interrupted");
 		__end();
 	}
 
@@ -133,7 +133,7 @@ public abstract class MoveStacker extends Command
 		}
 		catch (ConfigException e)
 		{
-			logger.severe(e);
+			//logger.severe(e);
 		}
 	}
 }

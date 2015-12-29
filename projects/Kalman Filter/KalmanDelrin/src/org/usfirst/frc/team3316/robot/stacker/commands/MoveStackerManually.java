@@ -21,7 +21,7 @@ public class MoveStackerManually extends Command
 
 	protected void initialize()
 	{
-		logger.fine(this.getName() + " initialize");
+		//logger.fine(this.getName() + " initialize");
 	}
 
 	protected void execute()
