@@ -180,36 +180,36 @@ public class Stacker extends Subsystem
 	
 	public boolean openSolenoidContainer()
 	{
-		//logger.fine("Try to open container solenoid");
+		logger.fine("Try to open container solenoid");
 		solenoidContainer.set(DoubleSolenoid.Value.kForward);
-		//logger.fine("Solenoid container opened");
+		logger.fine("Solenoid container opened");
 
 		return true;
 	}
 
 	public boolean closeSolenoidContainer()
 	{
-		//logger.fine("Try to close container solenoid");
+		logger.fine("Try to close container solenoid");
 		solenoidContainer.set(DoubleSolenoid.Value.kReverse);
-		//logger.fine("Solenoid container closed");
+		logger.fine("Solenoid container closed");
 
 		return true;
 	}
 
 	public boolean openSolenoidGripper()
 	{
-		//logger.fine("Try to open gripper solenoid");
+		logger.fine("Try to open gripper solenoid");
 		solenoidGripper.set(DoubleSolenoid.Value.kForward);
-		//logger.fine("Solenoid gripper opened");
+		logger.fine("Solenoid gripper opened");
 
 		return true;
 	}
 
 	public boolean closeSolenoidGripper()
 	{
-		//logger.fine("Try to close gripper solenoid");
+		logger.fine("Try to close gripper solenoid");
 		solenoidGripper.set(DoubleSolenoid.Value.kReverse);
-		//logger.fine("Solenoid gripper closed");
+		logger.fine("Solenoid gripper closed");
 
 		return true;
 	}
@@ -221,13 +221,13 @@ public class Stacker extends Subsystem
 	 */
 	public boolean allowStackMovement()
 	{
-		//logger.fine("Try to close brake solenoid (unbrake)");
+		logger.fine("Try to close brake solenoid (unbrake)");
 		solenoidBrake.set(DoubleSolenoid.Value.kForward);
-		//logger.fine("Solenoid brake closed");
+		logger.fine("Solenoid brake closed");
 
-		//logger.fine("Try to open holder solenoid");
+		logger.fine("Try to open holder solenoid");
 		solenoidHolder.set(DoubleSolenoid.Value.kReverse);
-		//logger.fine("Solenoid holders opened");
+		logger.fine("Solenoid holders opened");
 
 		return true;
 	}
@@ -239,13 +239,13 @@ public class Stacker extends Subsystem
 	 */
 	public boolean disallowStackMovement()
 	{
-		//logger.fine("Try to open brake solenoid (brake)");
+		logger.fine("Try to open brake solenoid (brake)");
 		solenoidBrake.set(DoubleSolenoid.Value.kReverse);
-		//logger.fine("Solenoid brake closed");
+		logger.fine("Solenoid brake closed");
 
-		//logger.fine("Try to close holder solenoid");
+		logger.fine("Try to close holder solenoid");
 		solenoidHolder.set(DoubleSolenoid.Value.kForward);
-		//logger.fine("Solenoid holder closed");
+		logger.fine("Solenoid holder closed");
 
 		return true;
 	}
@@ -359,7 +359,7 @@ public class Stacker extends Subsystem
 		}
 		catch (ConfigException e)
 		{
-			//logger.severe(e);
+			logger.severe(e);
 		}
 	}	
 
@@ -379,7 +379,7 @@ public class Stacker extends Subsystem
 		}
 		catch (ConfigException e)
 		{
-			//logger.severe(e);
+			logger.severe(e);
 		}
 	}	
 }

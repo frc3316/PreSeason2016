@@ -58,7 +58,7 @@ public class RollerGripper extends Subsystem
     	}
     	catch (ConfigException e)
     	{
-    		//logger.severe(e);
+    		logger.severe(e);
     	}
     }
     
@@ -143,7 +143,7 @@ public class RollerGripper extends Subsystem
     	}
     	catch (ConfigException e)
     	{
-    		//logger.severe(e);
+    		logger.severe(e);
     	}
     }
 }

@@ -44,7 +44,7 @@ public class SDB
 	{
 		public UpdateSDBTask()
 		{
-			//logger.info("Created UpdateSDBTask");
+			logger.info("Created UpdateSDBTask");
 		}
 
 		public void run()
@@ -99,7 +99,7 @@ public class SDB
 		}
 	}
 
-	//DBugLogger logger = Robot.logger;
+	DBugLogger logger = Robot.logger;
 	Config config = Robot.config;
 
 	private Image frame;
@@ -159,20 +159,20 @@ public class SDB
 			if (!constant)
 			{
 				variablesInSDB.put(key, type);
-				//logger.info("Added to SDB " + key + " of type " + type
-				//		+ "and allows for its modification");
+				logger.info("Added to SDB " + key + " of type " + type
+						+ "and allows for its modification");
 			}
 			else
 			{
-				//logger.info("Added to SDB " + key + " of type " + type
-				//		+ "BUT DOES NOT ALLOW for its modification");
+				logger.info("Added to SDB " + key + " of type " + type
+						+ "BUT DOES NOT ALLOW for its modification");
 			}
 
 			return true;
 		}
 		catch (ConfigException e)
 		{
-			//logger.severe(e);
+			logger.severe(e);
 		}
 		return false;
 	}
@@ -211,6 +211,6 @@ public class SDB
 
 		putConfigVariableInSDB("chassis_HeadingToSet");
 		
-		//logger.info("Finished initSDB()");
+		logger.info("Finished initSDB()");
 	}
 }
