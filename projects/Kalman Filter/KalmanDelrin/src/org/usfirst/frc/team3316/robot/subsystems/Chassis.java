@@ -156,18 +156,17 @@ public class Chassis extends Subsystem {
 		DenseMatrix64F u, z, R;
 
 		public double previousTime = 0;
-		public Double dt = Double.valueOf(0);
 
 		boolean predicting = true;
 
 		public KalmanTask() {
 			kalman = new KalmanFilter();
 
-			F = new DenseMatrix64F(new double[][] { { 1, dt }, { 0, 1 } });
+			F = new DenseMatrix64F(new double[][] { { 1, 0 }, { 0, 1 } });
 
 			B = new DenseMatrix64F(new double[][] { { 0 }, { 0 } });
 
-			Q = new DenseMatrix64F(new double[][] { { 0.1, 0 }, { 0, 0.1 } });
+			Q = new DenseMatrix64F(new double[][] { { 0.3, 0 }, { 0, 0.3 } });
 
 			H = new DenseMatrix64F(new double[][] { { 1, 0 }, { 0, 1 } });
 
@@ -185,7 +184,7 @@ public class Chassis extends Subsystem {
 
 			z = new DenseMatrix64F(2, 1);
 
-			R = new DenseMatrix64F(new double[][] { { 0.16, 0 }, { 0, 0.16 } });
+			R = new DenseMatrix64F(new double[][] { { 0.25, 0 }, { 0, 0.25 } });
 		}
 
 		public void run() {
@@ -204,8 +203,12 @@ public class Chassis extends Subsystem {
 				double currentTime = System.currentTimeMillis();
 				double currentEncoderSpeed = (getSpeedLeft() + getSpeedRight()) / 2;
 
-				dt = Double.valueOf((currentTime - previousTime) / 1000);
+				double dt = (currentTime - previousTime) / 10000;
+				
+				F.set(0, 1, dt);
 
+				logger.finest("This is F: " + F);
+				
 				z.set(0, 0, currentEncoderSpeed);
 				z.set(1, 0, getAccelY());
 
@@ -274,11 +277,12 @@ public class Chassis extends Subsystem {
 		Robot.timer.schedule(navigationTask, 0, 50);
 
 		kalmanTask = new KalmanTask();
-		Robot.timer.schedule(kalmanTask, 0, 20);
+		Robot.timer.schedule(kalmanTask, 0, 5);
 	}
 
 	public void initDefaultCommand() {
-		defaultDrive = new FieldOrientedDrive();
+		defaultDrive = new 
+				FieldOrientedDrive();
 		setDefaultCommand(defaultDrive);
 	}
 

@@ -1,5 +1,9 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Encoder Speed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="562" y="7"/>
+		<property name="Buffer Size (samples)" value="200"/>
+	</widget>
 	<widget field="Auton Chooser" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="0" y="330"/>
 	</widget>
@@ -19,10 +23,6 @@
 	</widget>
 	<widget field="Accelerometer Y" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
 		<location x="971" y="6"/>
-		<property name="Buffer Size (samples)" value="200"/>
-	</widget>
-	<widget field="Encoder Accel" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="563" y="6"/>
 		<property name="Buffer Size (samples)" value="200"/>
 	</widget>
 	<widget field="Stacker setMotors value: " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
@@ -73,4 +73,5 @@
 </dashboard>
 <live-window>
 </live-window>
+	<hidden field="Encoder Accel"/>
 </xml>
