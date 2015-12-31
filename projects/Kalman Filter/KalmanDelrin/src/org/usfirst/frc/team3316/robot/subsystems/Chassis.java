@@ -149,8 +149,7 @@ public class Chassis extends Subsystem {
 		}
 	}
 
-	private class KalmanTask extends TimerTask 
-	{
+	private class KalmanTask extends TimerTask {
 		public KalmanFilter kalman;
 
 		DenseMatrix64F F, B, Q, H;
@@ -190,15 +189,18 @@ public class Chassis extends Subsystem {
 		}
 
 		public void run() {
-			if (previousTime == 0) {
+			if (previousTime == 0) 
+			{
 				previousTime = System.currentTimeMillis();
 			}
 
-			if (predicting) {
+			if (predicting) 
+			{
 				kalman.predict(u);
 			}
 
-			else {
+			else 
+			{
 				double currentTime = System.currentTimeMillis();
 				double currentEncoderSpeed = (getSpeedLeft() + getSpeedRight()) / 2;
 
@@ -210,7 +212,6 @@ public class Chassis extends Subsystem {
 				kalman.update(z, R);
 
 				previousTime = currentTime;
-
 				kalmanState = kalman.getState().get(0);
 				kalmanCovariance = kalman.getCovariance().get(0);
 			}
