@@ -70,7 +70,7 @@ public class SDB
 			put("Encoder Center Speed", Robot.chassis.getSpeedCenter());
 			
 			put("Accelerometer Y", Robot.chassis.getAccelY());
-			put("Encoder Accel", Robot.chassis.getAccelEncoders());
+			put("Encoder Speed", (Robot.chassis.getSpeedLeft() + Robot.chassis.getSpeedRight()) / 2);
 			
 			put("Kalman State", Robot.chassis.getKalmanState());
 			put("Kalman Covariance", Robot.chassis.getKalmanCovariance());

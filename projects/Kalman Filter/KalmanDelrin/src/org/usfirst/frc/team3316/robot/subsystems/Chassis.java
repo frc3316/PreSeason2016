@@ -149,35 +149,36 @@ public class Chassis extends Subsystem {
 		}
 	}
 
-	private class KalmanTask extends TimerTask {
+	private class KalmanTask extends TimerTask 
+	{
 		public KalmanFilter kalman;
 
 		DenseMatrix64F F, B, Q, H;
 		DenseMatrix64F u, z, R;
 
-		public double prevEncoderSpeed = 0;
 		public double previousTime = 0;
+		public Double dt = Double.valueOf(0);
 
 		boolean predicting = true;
 
 		public KalmanTask() {
 			kalman = new KalmanFilter();
 
-			F = new DenseMatrix64F(new double[][] { { 1 } });
+			F = new DenseMatrix64F(new double[][] { { 1, dt }, { 0, 1 } });
 
-			B = new DenseMatrix64F(new double[][] { { 0 } });
+			B = new DenseMatrix64F(new double[][] { { 0 }, { 0 } });
 
-			Q = new DenseMatrix64F(new double[][] { { 0.1 } });
+			Q = new DenseMatrix64F(new double[][] { { 0.1, 0 }, { 0, 0.1 } });
 
-			H = new DenseMatrix64F(new double[][] { { 1 }, { 1 } });
+			H = new DenseMatrix64F(new double[][] { { 1, 0 }, { 0, 1 } });
 
 			kalman.configure(F, B, Q, H);
 
 			DenseMatrix64F x, P;
 
-			x = new DenseMatrix64F(new double[][] { { 0 } });
+			x = new DenseMatrix64F(new double[][] { { 0 }, { 0 } });
 
-			P = new DenseMatrix64F(new double[][] { { 1000 } });
+			P = new DenseMatrix64F(new double[][] { { 10, 0 }, { 0, 10 } });
 
 			kalman.setState(x, P);
 
@@ -188,35 +189,27 @@ public class Chassis extends Subsystem {
 			R = new DenseMatrix64F(new double[][] { { 0.16, 0 }, { 0, 0.16 } });
 		}
 
-		public void run() 
-		{
-			if (previousTime == 0) 
-			{
+		public void run() {
+			if (previousTime == 0) {
 				previousTime = System.currentTimeMillis();
 			}
 
-			if (predicting) 
-			{
-				kalman.predict(u);	
-			} 
-			
-			else 
-			{
+			if (predicting) {
+				kalman.predict(u);
+			}
+
+			else {
 				double currentTime = System.currentTimeMillis();
 				double currentEncoderSpeed = (getSpeedLeft() + getSpeedRight()) / 2;
 
-				double dt = (currentTime - previousTime) / 1000;
+				dt = Double.valueOf((currentTime - previousTime) / 1000);
 
-				encoderAccel = (currentEncoderSpeed - prevEncoderSpeed) / (dt);
-
-				z.set(0, 0, getAccelY());
-
-				z.set(1, 0, getAccelEncoders());
+				z.set(0, 0, currentEncoderSpeed);
+				z.set(1, 0, getAccelY());
 
 				kalman.update(z, R);
 
 				previousTime = currentTime;
-				prevEncoderSpeed = currentEncoderSpeed;
 
 				kalmanState = kalman.getState().get(0);
 				kalmanCovariance = kalman.getCovariance().get(0);
@@ -248,7 +241,6 @@ public class Chassis extends Subsystem {
 
 	private double angularVelocity = 0; // this is constantly calculated by
 										// NavigationThread
-	double encoderAccel = 0;
 
 	private double kalmanState = 0, kalmanCovariance = 0; // calculated by
 															// kalman filter
@@ -378,10 +370,6 @@ public class Chassis extends Subsystem {
 
 	public double getAccelY() {
 		return navx.getWorldLinearAccelY() * G;
-	}
-
-	public double getAccelEncoders() {
-		return encoderAccel;
 	}
 
 	public double getKalmanState() {
