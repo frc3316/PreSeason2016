@@ -14,6 +14,9 @@ import org.usfirst.frc.team3316.robot.commands.gripper.ExtendGripper;
 import org.usfirst.frc.team3316.robot.commands.gripper.OpenBallKeeper;
 import org.usfirst.frc.team3316.robot.commands.gripper.OpenGripperClaw;
 import org.usfirst.frc.team3316.robot.commands.gripper.RetractGripper;
+import org.usfirst.frc.team3316.robot.commands.kicker.KickerState;
+import org.usfirst.frc.team3316.robot.commands.kicker.ManageKicker;
+import org.usfirst.frc.team3316.robot.commands.kicker.RaiseCommand;
 import org.usfirst.frc.team3316.robot.commands.kicker.StateCommands.OverrideKickerToOff;
 import org.usfirst.frc.team3316.robot.commands.kicker.StateCommands.TriggerRaiseAndZero;
 import org.usfirst.frc.team3316.robot.commands.roller.CollectBall;
@@ -110,7 +113,7 @@ public class OI
         JoystickButton moveKickerToRest = new JoystickButton(
                 operatorJoystick, 
                 RobotConstants.getInt("KICKER_TO_REST_BUTTON"));
-        moveKickerToRest.whenPressed(new TriggerRaiseAndZero());
+        moveKickerToRest.whenPressed(new RaiseCommand());
         
         
         JoystickButton rollerIn = new JoystickButton(
@@ -130,7 +133,7 @@ public class OI
         
         SmartDashboard.putData("Drive 3.1M", new DriveDistance(3.1));
         
-        SmartDashboard.putData("Offing Kicker", new OverrideKickerToOff()) ;
+        //SmartDashboard.putData("Offing Kicker", new OverrideKickerToOff()) ;
         
         /*
          * Vision

@@ -38,10 +38,7 @@ public class BrakeCommand extends Command
     }
 
     protected void end() 
-    {
-        ManageKicker.changeState(KickerState.OFF);
-        System.out.println("Braked: " + RobotMap.kickerEncoder.getDistance());
-    }
+    {}
 
     protected void interrupted() {end();}
 }

@@ -61,7 +61,7 @@ public class RaiseCommand extends Command
 
     protected void end() 
     {
-        ManageKicker.changeState(KickerState.RESTING);
+        ManageKicker.changeState(KickerState.SHAKEN);
     }
     
     protected void interrupted() {end();}

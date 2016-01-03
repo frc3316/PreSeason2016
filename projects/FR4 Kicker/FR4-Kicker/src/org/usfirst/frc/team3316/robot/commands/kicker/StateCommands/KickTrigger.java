@@ -16,14 +16,13 @@ public class KickTrigger extends Command
 
     protected void initialize() {
         ManageKicker.changeState(KickerState.KICKING);
-        
     }
 
     protected void execute() {}
 
     protected boolean isFinished() 
     {
-        return Robot.kicker.currentState.equals(KickerState.OFF);
+        return Robot.kicker.currentState.equals(KickerState.RAISING);
     }
 
     protected void end() {}

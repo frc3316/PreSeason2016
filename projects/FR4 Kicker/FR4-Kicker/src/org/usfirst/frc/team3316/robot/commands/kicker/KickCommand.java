@@ -42,22 +42,14 @@ public class KickCommand extends Command
         {
             //System.out.println(RobotMap.kickerEncoder.getDistance());
             brakeCounter++;
-            logger.finest("Ball has been recognized by the IR sensor");
         }
         else if ((!RobotMap.gripperMSMiddle.get() && !RobotMap.gripperMSLeft.get()) || (!RobotMap.gripperMSMiddle.get() && !RobotMap.gripperMSRight.get()) || (!RobotMap.gripperMSRight.get() && !RobotMap.gripperMSLeft.get())) {
         	brakeCounter++;
-        	logger.finest("Ball has been recognized by the switches");
         }
-        
-        if(isTimedOut())
+
+        if (brakeCounter >= RobotConstants.getInt("KICKER_NUM_CYCLES"))
         {
-            ManageKicker.changeState(KickerState.KICKING);
-            System.out.println("Kicker Timed Out");
-            return true;
-        }
-        else if(brakeCounter >= RobotConstants.getInt("KICKER_NUM_CYCLES"))
-        {
-            ManageKicker.changeState(KickerState.BRAKE);
+            ManageKicker.changeState(KickerState.RAISING);
             System.out.println("Ball Out of Gripper");
             return true;
         }

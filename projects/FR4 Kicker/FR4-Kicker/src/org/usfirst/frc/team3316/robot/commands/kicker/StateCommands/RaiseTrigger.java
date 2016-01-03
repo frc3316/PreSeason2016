@@ -22,7 +22,6 @@ public class RaiseTrigger extends Command
 
     protected boolean isFinished() {
         return Robot.kicker.currentState.equals(KickerState.RESTING);
-//          || Robot.kicker.currentState.equals(KickerState.Shaken);
     }
 
     protected void end() {}

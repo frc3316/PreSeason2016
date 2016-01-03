@@ -5,6 +5,7 @@ package org.usfirst.frc.team3316.robot.commands.sequences;
 
 import org.usfirst.frc.team3316.robot.commands.defender.CloseDefender;
 import org.usfirst.frc.team3316.robot.commands.defender.OpenDefender;
+import org.usfirst.frc.team3316.robot.commands.defender.WaitForDefender;
 import org.usfirst.frc.team3316.robot.commands.gripper.CloseBallKeeper;
 import org.usfirst.frc.team3316.robot.commands.gripper.CloseGripperClaw;
 import org.usfirst.frc.team3316.robot.commands.gripper.OpenBallKeeper;
@@ -27,7 +28,7 @@ public class KickingSequence extends CommandGroup
         //addSequential(new RollIn(0.15));
 
         addParallel(new OpenDefender());
-        //addSequential(new WaitCommand(0.15));
+        addSequential(new WaitForDefender(5.0));
         addSequential(new OpenBallKeeper());
         
         addParallel(new OpenGripperClaw());     
@@ -36,7 +37,6 @@ public class KickingSequence extends CommandGroup
         
         addSequential(new WaitForRest());
         addSequential(new KickTrigger());
-        
         
         addParallel(new StartCompressor());
         addSequential(new CloseBallKeeper());
