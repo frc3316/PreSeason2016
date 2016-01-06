@@ -243,7 +243,7 @@ public class Chassis extends Subsystem {
 				double currentEncoderSpeedY = (getSpeedLeft() + getSpeedRight()) / 2;
 				double currentEncoderSpeedX = getSpeedCenter();
 
-				double dt = (currentTime - previousTime) / 10000;
+				double dt = (currentTime - previousTime) / 1000;
 				
 				fY.set(0, 1, dt);
 				
@@ -268,7 +268,7 @@ public class Chassis extends Subsystem {
 	
 	public class KalmanNavigationTask extends TimerTask 
 	{
-		public NavigationIntegrator integrator  = new NavigationIntegrator();;
+		public NavigationIntegrator integrator;
 		
 		private double previousTime = 0;
 		private double previousHeading = 0;
@@ -277,6 +277,9 @@ public class Chassis extends Subsystem {
 			// Makes sure the first time delta will not be since 1970
 			if (previousTime == 0) {
 				previousTime = System.currentTimeMillis();
+				
+				integrator  = new NavigationIntegrator();
+				navigationTask.addIntegrator(testIntegrator);
 			}
 			/*
 			 * Current variables
@@ -386,8 +389,6 @@ public class Chassis extends Subsystem {
 		
 		kalmanNavigationTask = new KalmanNavigationTask();
 		Robot.timer.schedule(kalmanNavigationTask, 0, 10);
-		
-		navigationTask.addIntegrator(testIntegrator);
 	}
 
 	public void initDefaultCommand() {
