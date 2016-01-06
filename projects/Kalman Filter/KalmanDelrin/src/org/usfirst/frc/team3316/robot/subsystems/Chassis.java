@@ -68,7 +68,7 @@ public class Chassis extends Subsystem {
 	 * calculates turning rate in chassis
 	 */
 	private class NavigationTask extends TimerTask {
-		private HashSet<NavigationIntegrator> integratorSet;
+		private HashSet <NavigationIntegrator> integratorSet;
 		private double previousTime = 0;
 		private double previousS = 0, previousF = 0, previousHeading = 0;
 
@@ -149,42 +149,80 @@ public class Chassis extends Subsystem {
 		}
 	}
 
-	private class KalmanTask extends TimerTask {
-		public KalmanFilter kalman;
+	private class KalmanTask extends TimerTask 
+	{
+		public KalmanFilter kalmanY;
+		public KalmanFilter kalmanX;
 
-		DenseMatrix64F F, B, Q, H;
-		DenseMatrix64F u, z, R;
+		DenseMatrix64F fY, bY, qY, hY;
+		DenseMatrix64F uY, zY, rY;
+		
+		DenseMatrix64F fX, bX, qX, hX;
+		DenseMatrix64F uX, zX, rX;
 
 		public double previousTime = 0;
 
 		boolean predicting = true;
 
-		public KalmanTask() {
-			kalman = new KalmanFilter();
+		public KalmanTask() 
+		{
+			/*
+			 * Kalman filter on the Y axis of the robot
+			 */
+			kalmanY = new KalmanFilter();
 
-			F = new DenseMatrix64F(new double[][] { { 1, 0 }, { 0, 1 } });
+			fY = new DenseMatrix64F(new double[][] { { 1, 0 }, { 0, 1 } });
 
-			B = new DenseMatrix64F(new double[][] { { 0 }, { 0 } });
+			bY = new DenseMatrix64F(new double[][] { { 0 }, { 0 } });
 
-			Q = new DenseMatrix64F(new double[][] { { 0.3, 0 }, { 0, 0.3 } });
+			qY = new DenseMatrix64F(new double[][] { { 0.3, 0 }, { 0, 0.3 } });
 
-			H = new DenseMatrix64F(new double[][] { { 1, 0 }, { 0, 1 } });
+			hY = new DenseMatrix64F(new double[][] { { 1, 0 }, { 0, 1 } });
 
-			kalman.configure(F, B, Q, H);
+			kalmanY.configure(fY, bY, qY, hY);
 
-			DenseMatrix64F x, P;
+			DenseMatrix64F xY, pY;
 
-			x = new DenseMatrix64F(new double[][] { { 0 }, { 0 } });
+			xY = new DenseMatrix64F(new double[][] { { 0 }, { 0 } });
 
-			P = new DenseMatrix64F(new double[][] { { 10, 0 }, { 0, 10 } });
+			pY = new DenseMatrix64F(new double[][] { { 10, 0 }, { 0, 10 } });
 
-			kalman.setState(x, P);
+			kalmanY.setState(xY, pY);
 
-			u = new DenseMatrix64F(new double[][] { { 0 } });
+			uY = new DenseMatrix64F(new double[][] { { 0 } });
 
-			z = new DenseMatrix64F(2, 1);
+			zY = new DenseMatrix64F(2, 1);
 
-			R = new DenseMatrix64F(new double[][] { { 0.25, 0 }, { 0, 0.25 } });
+			rY = new DenseMatrix64F(new double[][] { { 0.25, 0 }, { 0, 0.25 } });
+			
+			/*
+			 * Kalman filter on the X axis of the robot
+			 */
+			kalmanX = new KalmanFilter();
+
+			fX = new DenseMatrix64F(new double[][] { { 1, 0 }, { 0, 1 } });
+
+			bX = new DenseMatrix64F(new double[][] { { 0 }, { 0 } });
+
+			qX = new DenseMatrix64F(new double[][] { { 0.3, 0 }, { 0, 0.3 } });
+
+			hX = new DenseMatrix64F(new double[][] { { 1, 0 }, { 0, 1 } });
+
+			kalmanX.configure(fX, bX, qX, hX);
+
+			DenseMatrix64F xX, pX;
+
+			xX = new DenseMatrix64F(new double[][] { { 0 }, { 0 } });
+
+			pX = new DenseMatrix64F(new double[][] { { 10, 0 }, { 0, 10 } });
+
+			kalmanX.setState(xX, pX);
+
+			uX = new DenseMatrix64F(new double[][] { { 0 } });
+
+			zX = new DenseMatrix64F(2, 1);
+
+			rX = new DenseMatrix64F(new double[][] { { 0.25, 0 }, { 0, 0.25 } });
 		}
 
 		public void run() {
@@ -195,31 +233,95 @@ public class Chassis extends Subsystem {
 
 			if (predicting) 
 			{
-				kalman.predict(u);
+				kalmanY.predict(uY);
+				kalmanX.predict(uX);
 			}
 
 			else 
 			{
 				double currentTime = System.currentTimeMillis();
-				double currentEncoderSpeed = (getSpeedLeft() + getSpeedRight()) / 2;
+				double currentEncoderSpeedY = (getSpeedLeft() + getSpeedRight()) / 2;
+				double currentEncoderSpeedX = getSpeedCenter();
 
 				double dt = (currentTime - previousTime) / 10000;
 				
-				F.set(0, 1, dt);
-
-				logger.finest("This is F: " + F);
+				fY.set(0, 1, dt);
 				
-				z.set(0, 0, currentEncoderSpeed);
-				z.set(1, 0, getAccelY());
+				zY.set(0, 0, currentEncoderSpeedY);
+				zY.set(1, 0, getAccelY());
 
-				kalman.update(z, R);
+				kalmanY.update(zY, rY);
+				
+				fX.set(0, 1, dt);
+				
+				zX.set(0, 0, currentEncoderSpeedX);
+				zX.set(1, 0, getAccelX());
+				
+				kalmanX.update(zX, rX);
 
 				previousTime = currentTime;
-				kalmanState = kalman.getState().get(0);
-				kalmanCovariance = kalman.getCovariance().get(0);
 			}
 
 			predicting = !predicting;
+		}
+	}
+	
+	public class KalmanNavigationTask extends TimerTask 
+	{
+		public NavigationIntegrator integrator  = new NavigationIntegrator();;
+		
+		private double previousTime = 0;
+		private double previousHeading = 0;
+
+		public void run() {
+			// Makes sure the first time delta will not be since 1970
+			if (previousTime == 0) {
+				previousTime = System.currentTimeMillis();
+			}
+			/*
+			 * Current variables
+			 */
+			double currentTime = System.currentTimeMillis();
+			double currentHeading = getHeading();
+			double currentSpeedS = kalmanTask.kalmanX.getState().get(0); // Sideways distance
+			double currentSpeedF = kalmanTask.kalmanY.getState().get(0); // Forward
+																		  // distance
+
+			/*
+			 * Calculates deltas between current and previous
+			 */
+			double dT = (currentTime - previousTime) / 1000; // conversion to
+																// seconds
+			double dTheta = currentHeading - previousHeading;
+			double dS = currentSpeedS * dT;
+			double dF = currentSpeedF * dT;
+			// Since heading is in the range (-180) to (180), when
+			// completing a full turn dTheta will be an absurdly big value
+			// Checks if dTheta is an absurdly big value and fixes it
+			if (dTheta > 340) // 340 is a big number
+			{
+				dTheta -= 360;
+			}
+			if (dTheta < -340) // Math.abs(-340) is another big number
+			{
+				dTheta += 360;
+			}
+
+			double dX, dY; // speeds relative to the orientation that the
+							// integrator started at
+			// headingRad is the average of the previous integrator angle
+			// and the angle it will have (in radians)
+			double headingRad = (Math.toRadians(integrator.getHeading() + dTheta / 2));
+			dX = (dF * Math.sin(headingRad)) + (dS * Math.sin(headingRad + (0.5 * Math.PI)));
+			dY = (dF * Math.cos(headingRad)) + (dS * Math.cos(headingRad + (0.5 * Math.PI)));
+
+			integrator.add(dX, dY, dTheta);
+
+			/*
+			 * Setting variables for next run
+			 */
+			previousTime = currentTime;
+			previousHeading = currentHeading;
 		}
 	}
 
@@ -246,9 +348,10 @@ public class Chassis extends Subsystem {
 	private double angularVelocity = 0; // this is constantly calculated by
 										// NavigationThread
 
-	private double kalmanState = 0, kalmanCovariance = 0; // calculated by
-															// kalman filter
 	public boolean recording = true;
+	
+	public KalmanNavigationTask kalmanNavigationTask;
+	public NavigationIntegrator testIntegrator;
 
 	Drive defaultDrive;
 
@@ -270,14 +373,21 @@ public class Chassis extends Subsystem {
 		encoderLeft = Robot.sensors.chassisEncoderLeft;
 		encoderRight = Robot.sensors.chassisEncoderRight;
 		encoderCenter = Robot.sensors.chassisEncoderCenter;
+		
+		testIntegrator = new NavigationIntegrator();
 	}
 
 	public void timerInit() {
 		navigationTask = new NavigationTask();
-		Robot.timer.schedule(navigationTask, 0, 50);
+		Robot.timer.schedule(navigationTask, 0, 10);
 
 		kalmanTask = new KalmanTask();
 		Robot.timer.schedule(kalmanTask, 0, 5);
+		
+		kalmanNavigationTask = new KalmanNavigationTask();
+		Robot.timer.schedule(kalmanNavigationTask, 0, 10);
+		
+		navigationTask.addIntegrator(testIntegrator);
 	}
 
 	public void initDefaultCommand() {
@@ -375,14 +485,6 @@ public class Chassis extends Subsystem {
 
 	public double getAccelY() {
 		return navx.getWorldLinearAccelY() * G;
-	}
-
-	public double getKalmanState() {
-		return kalmanState;
-	}
-
-	public double getKalmanCovariance() {
-		return kalmanCovariance;
 	}
 
 	/*

@@ -68,14 +68,19 @@ public class SDB
 			put("Encoder Left Speed", Robot.chassis.getSpeedLeft());
 			put("Encoder Right Speed", Robot.chassis.getSpeedRight());
 			put("Encoder Center Speed", Robot.chassis.getSpeedCenter());
-			
-			put("Accelerometer Y", Robot.chassis.getAccelY());
-			put("Encoder Speed", (Robot.chassis.getSpeedLeft() + Robot.chassis.getSpeedRight()) / 2);
-			
-			put("Kalman State", Robot.chassis.getKalmanState());
-			put("Kalman Covariance", Robot.chassis.getKalmanCovariance());
 
 			put("Kalman Recording", Robot.chassis.recording);
+			
+			/*
+			 * Kalman testings
+			 */
+			put("Old Integrator X", Robot.chassis.testIntegrator.getX());
+			put("Old Integrator Y", Robot.chassis.testIntegrator.getY());
+			put("Old Integrator Heading", Robot.chassis.testIntegrator.getHeading());
+			
+			put("New Integrator X", Robot.chassis.kalmanNavigationTask.integrator.getX());
+			put("New Integrator Y", Robot.chassis.kalmanNavigationTask.integrator.getY());
+			put("New Integrator Heading", Robot.chassis.kalmanNavigationTask.integrator.getHeading());
 		}
 
 		private void put(String name, double d)
