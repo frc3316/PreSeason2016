@@ -43,6 +43,5 @@ public class KickingSequence extends CommandGroup
         addSequential(new CloseGripperClaw());
         addSequential(new WaitForChildren());
         addSequential(new RaiseTrigger());
-        addSequential(new CloseDefender());
     }
 }
