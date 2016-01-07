@@ -71,6 +71,8 @@ public class SDB
 
 			put("Kalman Recording", Robot.chassis.recording);
 			
+			put("Angular Velocity", Robot.chassis.getAngularVelocity());
+			
 			/*
 			 * Kalman testings
 			 */

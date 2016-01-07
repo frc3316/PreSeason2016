@@ -1,8 +1,22 @@
 <xml version="1.0">
 <dashboard>
-	<widget field="Encoder Speed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="562" y="7"/>
-		<property name="Buffer Size (samples)" value="200"/>
+	<widget field="Old Integrator X" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="675" y="378"/>
+	</widget>
+	<widget field="Old Integrator Y" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="852" y="378"/>
+	</widget>
+	<widget field="Old Integrator Heading" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="674" y="34"/>
+	</widget>
+	<widget field="New Integrator Heading" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="883" y="35"/>
+	</widget>
+	<widget field="New Integrator X" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="672" y="329"/>
+	</widget>
+	<widget field="New Integrator Y" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="854" y="326"/>
 	</widget>
 	<widget field="Auton Chooser" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="0" y="330"/>
@@ -12,18 +26,6 @@
 	</widget>
 	<widget field="KalmanRecord" type="Command" class="edu.wpi.first.smartdashboard.gui.elements.Command">
 		<location x="0" y="296"/>
-	</widget>
-	<widget field="Kalman Covariance" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="972" y="321"/>
-		<property name="Buffer Size (samples)" value="200"/>
-	</widget>
-	<widget field="Kalman State" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="566" y="321"/>
-		<property name="Buffer Size (samples)" value="200"/>
-	</widget>
-	<widget field="Accelerometer Y" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="971" y="6"/>
-		<property name="Buffer Size (samples)" value="200"/>
 	</widget>
 	<widget field="Stacker setMotors value: " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="321" y="207"/>
@@ -73,5 +75,8 @@
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="Encoder Accel"/>
+	<hidden field="Kalman State"/>
+	<hidden field="Accelerometer Y"/>
+	<hidden field="Kalman Covariance"/>
+	<hidden field="Encoder Speed"/>
 </xml>

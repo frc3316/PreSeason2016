@@ -36,147 +36,164 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot
 {
-    public static Command autonDriveForward, autonNone;
-    public static AutonomousCamera autonCamera;
-    SendableChooser autonChooser;
-    
-    public static Config config;
-    public static DBugLogger logger;
-    public static Timer timer;
-    /*
-     * Human IO
-     */
-    public static Joysticks joysticks;
-    public static SDB sdb;
-    /*
-     * Robot IO
-     */
-    public static Actuators actuators;
-    public static Sensors sensors;
-    
-    /*
-     * Subsystems
-     */
+	public static Command autonDriveForward, autonNone;
+	public static AutonomousCamera autonCamera;
+	SendableChooser autonChooser;
+
+	public static Config config;
+	public static DBugLogger logger;
+	public static Timer timer;
+	/*
+	 * Human IO
+	 */
+	public static Joysticks joysticks;
+	public static SDB sdb;
+	/*
+	 * Robot IO
+	 */
+	public static Actuators actuators;
+	public static Sensors sensors;
+
+	/*
+	 * Subsystems
+	 */
 	public static Chassis chassis;
 	public static Stacker stacker;
 	public static RollerGripper rollerGripper;
-	
+
 	/*
 	 * Compressor
 	 */
 	public static Compressor comp;
-	
-    /**
-     * This function is run when the robot is first started up and should be
-     * used for any initialization code.
-     */
-    public void robotInit() 
-    {
-    	/*
-    	 * Above all else
-    	 */
-    	logger = new DBugLogger();
-    	config = new Config();
-    	
-    	/*
-    	 * Human IO (that does not require subsystems)
-    	 */
-    	joysticks = new Joysticks();
-    	
-    	/*
-    	 * Robot IO
-    	 */
-    	actuators = new Actuators();
-    	sensors = new Sensors();
-    	
-    	/*
-    	 * Subsystems
-    	 */
-    	chassis = new Chassis();
-    	rollerGripper = new RollerGripper();
-    	stacker = new Stacker();
-    	
-    	/*
-    	 * Compressor
-    	 */
-    	comp = new Compressor();
-    	
-    	/*
-    	 * Human IO (that requires subsystems)
-    	 */
-    	joysticks.initButtons();
-    	sdb = new SDB();
-    	
-    	/*
-    	 * Timer
-    	 */
+
+	/**
+	 * This function is run when the robot is first started up and should be
+	 * used for any initialization code.
+	 */
+	public void robotInit()
+	{
+		/*
+		 * Above all else
+		 */
+		logger = new DBugLogger();
+		config = new Config();
+
+		/*
+		 * Human IO (that does not require subsystems)
+		 */
+		joysticks = new Joysticks();
+
+		/*
+		 * Robot IO
+		 */
+		actuators = new Actuators();
+		sensors = new Sensors();
+
+		/*
+		 * Subsystems
+		 */
+		chassis = new Chassis();
+		rollerGripper = new RollerGripper();
+		stacker = new Stacker();
+
+		/*
+		 * Compressor
+		 */
+		comp = new Compressor();
+
+		/*
+		 * Human IO (that requires subsystems)
+		 */
+		joysticks.initButtons();
+		sdb = new SDB();
+
+		/*
+		 * Timer
+		 */
 		timer = new Timer();
 		chassis.timerInit();
 		stacker.timerInit();
 		rollerGripper.timerInit();
 		sdb.timerInit();
-    	
-    	/*
-    	 * Pre-match Init
-    	 */
-    	(new SetHeadingSDB()).start();
-    	
-    	autonDriveForward = new AutonomousDriveForward();
-    	autonNone = new AutonomousNone();
-    	autonCamera = new AutonomousCamera();
-    	
-    	autonChooser = new SendableChooser();
-    	autonChooser.addDefault("None", autonNone);
-    	autonChooser.addObject("Drive Forward", autonDriveForward);
-    	
-    	SmartDashboard.putData("Auton Chooser", autonChooser);
-    }
-	
-	public void disabledPeriodic() {
+
+		/*
+		 * Pre-match Init
+		 */
+		(new SetHeadingSDB()).start();
+
+		autonDriveForward = new AutonomousDriveForward();
+		autonNone = new AutonomousNone();
+		autonCamera = new AutonomousCamera();
+
+		autonChooser = new SendableChooser();
+		autonChooser.addDefault("None", autonNone);
+		autonChooser.addObject("Drive Forward", autonDriveForward);
+
+		SmartDashboard.putData("Auton Chooser", autonChooser);
+	}
+
+	public void disabledPeriodic()
+	{
 		Scheduler.getInstance().run();
 	}
 
-    public void autonomousInit() 
-    {
-    	if (autonChooser != null && autonChooser.getSelected() != null)
-    	{
-        	((Command) autonChooser.getSelected()).start();
-    	}
-    	autonCamera.start();
-    }
+	public void autonomousInit()
+	{
+		if (autonChooser != null && autonChooser.getSelected() != null)
+		{
+			((Command) autonChooser.getSelected()).start();
+		}
+		autonCamera.start();
+	}
 
-    /**
-     * This function is called periodically during autonomous
-     */
-    public void autonomousPeriodic() {
-        Scheduler.getInstance().run();
-    }
+	/**
+	 * This function is called periodically during autonomous
+	 */
+	public void autonomousPeriodic()
+	{
+		Scheduler.getInstance().run();
+	}
 
-    public void teleopInit() 
-    {
-    	if (autonChooser != null && autonChooser.getSelected() != null)
-    	{
-    		((Command) autonChooser.getSelected()).cancel();
-    	}
-    }
-    
-    /**
-     * * This function is called when the disabled button is hit.		
-     * You can use it to reset subsystems before shutting down.		
-     */		
-    public void disabledInit() {}		
-		
-    /**
-     * This function is called periodically during operator control
-     */
-    public void teleopPeriodic() {
-        Scheduler.getInstance().run();
-    }
-    
-    /**
-     * This function is called periodically during test mode
-     */
-    public void testPeriodic() {
-        LiveWindow.run();
-    }
+	public void teleopInit()
+	{
+		if (autonChooser != null && autonChooser.getSelected() != null)
+		{
+			((Command) autonChooser.getSelected()).cancel();
+
+			Robot.chassis.testIntegrator.add(
+					-Robot.chassis.testIntegrator.getX(),
+					-Robot.chassis.testIntegrator.getY(),
+					-Robot.chassis.testIntegrator.getHeading());
+			Robot.chassis.kalmanNavigationTask.integrator
+					.add(-Robot.chassis.kalmanNavigationTask.integrator.getX(),
+							-Robot.chassis.kalmanNavigationTask.integrator
+									.getY(),
+							-Robot.chassis.kalmanNavigationTask.integrator
+									.getHeading());
+		}
+	}
+
+	/**
+	 * * This function is called when the disabled button is hit. You can use it
+	 * to reset subsystems before shutting down.
+	 */
+	public void disabledInit()
+	{
+	}
+
+	/**
+	 * This function is called periodically during operator control
+	 */
+	public void teleopPeriodic()
+	{
+		Scheduler.getInstance().run();
+	}
+
+	/**
+	 * This function is called periodically during test mode
+	 */
+	public void testPeriodic()
+	{
+		LiveWindow.run();
+	}
 }

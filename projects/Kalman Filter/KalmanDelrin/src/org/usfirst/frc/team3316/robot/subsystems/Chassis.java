@@ -4,6 +4,7 @@
 package org.usfirst.frc.team3316.robot.subsystems;
 
 import java.util.HashSet;
+import java.util.Timer;
 import java.util.TimerTask;
 
 import org.ejml.data.DenseMatrix64F;
@@ -95,6 +96,8 @@ public class Chassis extends Subsystem {
 			 */
 			double dT = (currentTime - previousTime) / 1000; // conversion to
 																// seconds
+			logger.finest("Navigation Task DT: " + dT);
+			
 			double dTheta = currentHeading - previousHeading;
 			double dS = currentS - previousS;
 			double dF = currentF - previousF;
@@ -175,7 +178,7 @@ public class Chassis extends Subsystem {
 
 			bY = new DenseMatrix64F(new double[][] { { 0 }, { 0 } });
 
-			qY = new DenseMatrix64F(new double[][] { { 0.3, 0 }, { 0, 0.3 } });
+			qY = new DenseMatrix64F(new double[][] { { 0.1, 0.0001 }, { 0.0001, 0.4 } });
 
 			hY = new DenseMatrix64F(new double[][] { { 1, 0 }, { 0, 1 } });
 
@@ -193,7 +196,7 @@ public class Chassis extends Subsystem {
 
 			zY = new DenseMatrix64F(2, 1);
 
-			rY = new DenseMatrix64F(new double[][] { { 0.25, 0 }, { 0, 0.25 } });
+			rY = new DenseMatrix64F(new double[][] { { 0.001, 0.0001 }, { 0.0001, 0.3 } });
 			
 			/*
 			 * Kalman filter on the X axis of the robot
@@ -204,7 +207,7 @@ public class Chassis extends Subsystem {
 
 			bX = new DenseMatrix64F(new double[][] { { 0 }, { 0 } });
 
-			qX = new DenseMatrix64F(new double[][] { { 0.3, 0 }, { 0, 0.3 } });
+			qX = new DenseMatrix64F(new double[][] { { 0.1, 0.0001 }, { 0.0001, 0.4 } });
 
 			hX = new DenseMatrix64F(new double[][] { { 1, 0 }, { 0, 1 } });
 
@@ -222,7 +225,7 @@ public class Chassis extends Subsystem {
 
 			zX = new DenseMatrix64F(2, 1);
 
-			rX = new DenseMatrix64F(new double[][] { { 0.25, 0 }, { 0, 0.25 } });
+			rX = new DenseMatrix64F(new double[][] { { 0.04, 0.0001 }, { 0.0001, 0.3 } });
 		}
 
 		public void run() {
@@ -244,6 +247,7 @@ public class Chassis extends Subsystem {
 				double currentEncoderSpeedX = getSpeedCenter();
 
 				double dt = (currentTime - previousTime) / 1000;
+				logger.finest("Kalman Task DT: " + dt);
 				
 				fY.set(0, 1, dt);
 				
@@ -295,6 +299,8 @@ public class Chassis extends Subsystem {
 			 */
 			double dT = (currentTime - previousTime) / 1000; // conversion to
 																// seconds
+			logger.finest("Kalman Navigation Task DT: " + dT);
+			
 			double dTheta = currentHeading - previousHeading;
 			double dS = currentSpeedS * dT;
 			double dF = currentSpeedF * dT;
@@ -380,15 +386,22 @@ public class Chassis extends Subsystem {
 		testIntegrator = new NavigationIntegrator();
 	}
 
-	public void timerInit() {
+	Timer timer1, timer2, timer3;
+	
+	public void timerInit() 
+	{
 		navigationTask = new NavigationTask();
-		Robot.timer.schedule(navigationTask, 0, 10);
-
+		timer1 = new Timer();
+		
 		kalmanTask = new KalmanTask();
-		Robot.timer.schedule(kalmanTask, 0, 5);
+		timer2 = new Timer();
 		
 		kalmanNavigationTask = new KalmanNavigationTask();
-		Robot.timer.schedule(kalmanNavigationTask, 0, 10);
+		timer3 = new Timer();
+		
+		timer1.scheduleAtFixedRate(navigationTask, 0, 20);
+		timer2.scheduleAtFixedRate(kalmanTask, 0, 10);
+		timer3.scheduleAtFixedRate(kalmanNavigationTask, 0, 20);
 	}
 
 	public void initDefaultCommand() {
